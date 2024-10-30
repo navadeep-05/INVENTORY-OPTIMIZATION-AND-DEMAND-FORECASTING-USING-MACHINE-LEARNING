@@ -10,4 +10,3 @@ sqlite3
 warnings
 time
 keras
---upgrade pip
