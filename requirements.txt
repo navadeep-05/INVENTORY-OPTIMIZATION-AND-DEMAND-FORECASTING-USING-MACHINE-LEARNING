@@ -2,3 +2,11 @@ scikit-learn
 statsmodels
 tensorflow
 plotly
+pandas
+numpy
+chardet
+hashlib
+sqlite3
+warnings
+time
+keras
