@@ -22,7 +22,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # This must be the first command in your app, and must be set only once
-st.set_page_config(page_title="ML Project 1", layout="wide", page_icon = "D:\ML_Minor1\icon2.png", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ML Project 1", layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
 
 #Helper function to create a connection to SQLite
 def get_connection():
