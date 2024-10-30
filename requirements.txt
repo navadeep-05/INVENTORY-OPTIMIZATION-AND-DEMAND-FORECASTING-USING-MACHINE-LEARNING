@@ -2,7 +2,6 @@ scikit-learn
 statsmodels
 tensorflow
 plotly
-warnings
 time
 keras
 pandas>=2.0.0
