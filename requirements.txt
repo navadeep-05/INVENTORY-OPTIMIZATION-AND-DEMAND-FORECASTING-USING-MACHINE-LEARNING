@@ -5,7 +5,6 @@ plotly
 pandas
 numpy
 chardet>=5.1.0
-sqlite3
 warnings
 time
 keras
