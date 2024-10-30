@@ -4,7 +4,7 @@ tensorflow
 plotly
 pandas
 numpy
-chardet
+chardet>=5.1.0
 hashlib
 sqlite3
 warnings
