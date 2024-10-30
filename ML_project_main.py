@@ -269,7 +269,7 @@ def app():
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = True 
 
-    st.image(r"D:\ML_Minor1\logo2.png", width=100)
+    st.image(r"logo2.png", width=100)
     st.header("Welcome to the Web Application")
     st.image(r"D:\ML_Minor1\banner3.jpeg", use_column_width=True)
     st.title("Demand Forecasting & Inventory Optimization📈")
