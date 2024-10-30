@@ -22,7 +22,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # This must be the first command in your app, and must be set only once
-st.set_page_config(page_title="ML Project 1", layout="wide", page_icon = "D:\ML_Minor1\icon2.png", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ML Project 1", layout="wide", page_icon = "/workspaces/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING/icon2.png", initial_sidebar_state="expanded")
 
 #Helper function to create a connection to SQLite
 def get_connection():
@@ -269,9 +269,9 @@ def app():
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = True 
 
-    st.image(r"D:\ML_Minor1\logo2.png", width=100)
+    st.image(r"/workspaces/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING/logo2.png", width=100)
     st.header("Welcome to the Web Application")
-    st.image(r"D:\ML_Minor1\banner3.jpeg", use_column_width=True)
+    st.image(r"/workspaces/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING/banner3.jpeg", use_column_width=True)
     st.title("Demand Forecasting & Inventory Optimization📈")
 
     
@@ -843,7 +843,7 @@ def show_about():
     - New models like **XGBoost** and **Prophet** are in development for more accurate predictions.
     """)
     st.write("")
-    st.image(r"D:\ML_Minor1\future imp2.png", caption='Future Estimates', width=700, clamp=True, channels='RGB')
+    st.image(r"/workspaces/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING/future imp2.png", caption='Future Estimates', width=700, clamp=True, channels='RGB')
 
 def show_ask_question():
     st.title("Ask a Question")
@@ -1023,7 +1023,7 @@ def logout():
     else:
         st.info("You are already logged out.")
     st.write("")
-    st.video(r"C:\Users\WINDOWS 10\Downloads\an animation of a hand drawn business strategy with chart_preview.mp4")
+    st.video(r"/workspaces/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING/an animation of a hand drawn business strategy with chart_preview.mp4")
 
 # Main routing logic based on session state
 def main():
