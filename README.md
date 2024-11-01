@@ -1,10 +1,13 @@
-# INVENTORY OPTIMIZATION AND DEMAND FORECASTING USING MACHINE LEARNING ⚙
+# Project: Inventory Optimization and Demand Forecasting Using Machine Learning
+
 ## Overview
-This project focuses on using machine learning techniques to enhance inventory management and accurately demand of sales. It's goal is to support businesses, such as retail stores, shopkeepers and supply chains, in maintaining optimal inventory levels , minimizing stockouts, and reducing excess inventory. 
+
+This project provides a web-based application for inventory optimization and demand forecasting, using machine learning algorithms to help businesses make informed decisions on demand forecasting and stock management.
 
 ## Table of Contents
-1. Features
-2. Installation
+
+1. [Features](#features)
+2. [Installation](#installation)
 3. Setup and configuration
 4. Usage
 5. Working with the Project
