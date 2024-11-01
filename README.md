@@ -23,12 +23,16 @@ This project provides a web-based application for inventory optimization and dem
 
 ## Installation
 ### Prerequisities
-- Python 3.5+
-- pip to install required packages
+Ensure you have:
+
+- **Python 3.8+**
+- **pip** to install required packages.
+
+
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/navadeep-05/INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING.git
-cd INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING
+cd INVENTORY-OPTIMIZATION-AND-DEMAND-FORECASTING-USING-MACHINE-LEARNING 
 
 ### Step 2: Install Required Packages
 All required dependencies are listed in the requirements.txt file. Run the following command to install them:
