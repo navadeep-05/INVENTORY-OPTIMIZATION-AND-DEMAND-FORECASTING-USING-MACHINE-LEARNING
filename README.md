@@ -12,8 +12,9 @@ This project provides a web-based application for inventory optimization and dem
 4. [Usage](#usage)
 5. [Working with the Project](#working-with-the-project)
 6. [Models Used](#models-used)
-7. [Contributing](#contributing)
-8. [License](#license)
+7. [Development Platforms](#development-platforms)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ## Features
 - **User Authentication**: Allows user registration, login, and password reset.
@@ -88,6 +89,58 @@ Users can choose from the following models:
 - **Random Forest Regressor:** Ensemble learning technique for better accuracy on complex data.
 - **ARIMA:** Statistical models well-suited for time series forecasting.
 - **LSTM Neural Network:** Deep learning model specialized in time series forecasting with long-term dependencies.
+
+## Development Platforms
+This project is designed to be flexible, allowing users to run and develop it on several platforms. Below are some recommended platforms for working with the Streamlit application:
+1. **Visual Studio Code (VS Code)**
+   - **Why Use It:** VS Code is a free, lightweight code editor with extensive extensions that support Python development and Streamlit integration.
+   - **How to Run:**
+     > Install the [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) for VS Code.
+     > Open the project folder in VS Code.
+     > Use the built-in terminal to run the command:
+     ```bash
+       streamlit run ML_project_main.py
+       ```
+     > The app will open in your default browser. Any code updates will automatically refresh the app.
+
+2. **Jupyter Notebook**
+   - **Why Use It:** Jupyter Notebook is popular for data science workflows, allowing you to test and visualize individual code sections.
+   - **How to Run:**
+     > Use Jupyter Notebook primarily for experimenting with and developing individual model components.
+     > For full app functionality, it’s recommended to transition the code to a `.py` file and run it with Streamlit, as Jupyter does not support full web app interactivity.
+     > Alternatively, use [JupyterLab](https://jupyter.org/), which offers more extensive Python development tools and a more flexible interface.
+
+3. ***Google Cloud Platform (GCP)***
+
+- **Why Use It**: GCP is suitable for deploying and scaling applications, especially if you plan to deploy the app for broader use.
+
+- **How to Set Up**:
+
+  > Use a Google Cloud VM with Python and Streamlit installed.
+  > Transfer your project files to the VM using `scp` or upload them directly through GCP’s web interface.
+  > Run the app on the VM with:
+
+    ```bash
+    streamlit run ML_project_main.py --server.port <port_number> --server.address 0.0.0.0
+    ```
+
+  > Configure firewall settings to allow external access to the port you specify. This will make your app accessible via a public IP address.
+4. **Google COlab**
+  - **Why Use It:** Google Colab provides free access to GPUs, making it suitable for running machine learning models, especially for experimenting with the LSTM model.
+  - **How to Use:**
+    > You can run individual sections of the code to test models and preprocess data.
+    > Google Colab does not natively support Streamlit apps, but you can use a workaround with `ngrok` to expose a public URL for your Streamlit app.
+    > Follow these steps in Colab:
+    ```python
+    !pip install streamlit pyngrok
+    from pyngrok import ngrok
+
+    !streamlit run ML_project_main.py &
+
+    # Expose the app with ngrok
+    public_url = ngrok.connect(port="8501")
+    print(public_url)
+    ```
 
 ## Contributing
 Contributions are welcome! Here’s how to get started:
