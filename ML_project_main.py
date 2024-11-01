@@ -132,9 +132,29 @@ if "reset_password" not in st.session_state:
 # Color schemes
 st.markdown("""
     <style>
-        .main { background-color: #f5f5f5; }
-        .stButton button { background-color: #4CAF50; color: white; }
-        .stTextInput input { background-color: #e8f0fe; }
+        /* Light Mode */
+        :root {
+            --background-color: #00FFFFFF;
+            --text-color: #000000;
+            --input-background-color: #e8f0fe;
+            --button-color: #4CAF50;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --text-color: #EAEAEA;
+                --input-background-color: #1A1A1A;
+                --button-color: #FF3E3E;
+            }
+        }
+
+        /* Apply styles */
+        .main { background-color: var(--background-color) !important; }
+        .stTextInput input { background-color: var(--input-background-color) !important; color: var(--text-color) !important; }
+        .stButton button { background-color: var(--button-color) !important; color: #FFFFFF; }
+        .stForm .stFormHeader p { color: var(--text-color) !important; }
     </style>
 """, unsafe_allow_html=True)
 
