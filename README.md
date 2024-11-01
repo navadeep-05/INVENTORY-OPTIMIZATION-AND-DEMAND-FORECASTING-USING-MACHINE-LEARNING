@@ -13,10 +13,10 @@ This project focuses on using machine learning techniques to enhance inventory m
 8. License
 
 ## Features
-- User Authentication: Allows user registration, login, and password reset.
-- Inventory and Demand Forecasting: Predicts future demand using various forecasting models.
-- Data Visualization: Provides interactive charts for data analysis.
-- Dark and Light Mode Support: Adapts to the user’s system theme for a better viewing experience.
+- **User Authentication**: Allows user registration, login, and password reset.
+- **Inventory and Demand Forecasting**: Predicts future demand using various forecasting models.
+- **Data Visualization**: Provides interactive charts for data analysis.
+- **Dark and Light Mode Support**: Adapts to the user’s system theme for a better viewing experience.
 
 ## Installation
 ### Prerequisities
