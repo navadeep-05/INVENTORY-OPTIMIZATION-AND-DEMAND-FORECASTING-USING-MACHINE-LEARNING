@@ -1,4 +1,4 @@
-# Project: Inventory Optimization and Demand Forecasting Using Machine Learning
+# Project: Inventory Optimization and Demand Forecasting Using Machine Learning ⚙
 
 ## Overview
 
@@ -8,12 +8,12 @@ This project provides a web-based application for inventory optimization and dem
 
 1. [Features](#features)
 2. [Installation](#installation)
-3. Setup and configuration
-4. Usage
-5. Working with the Project
-6. Models used
-7. Contributing
-8. License
+3. [Setup and Configuration](#setup-and-configuration)
+4. [Usage](#usage)
+5. [Working with the Project](#working-with-the-project)
+6. [Models Used](#models-used)
+7. [Contributing](#contributing)
+8. [License](#license)
 
 ## Features
 - **User Authentication**: Allows user registration, login, and password reset.
