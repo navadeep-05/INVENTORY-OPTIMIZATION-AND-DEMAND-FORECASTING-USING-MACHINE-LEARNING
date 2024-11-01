@@ -125,7 +125,7 @@ This project is designed to be flexible, allowing users to run and develop it on
     ```
 
   > Configure firewall settings to allow external access to the port you specify. This will make your app accessible via a public IP address.
-4. **Google COlab**
+4. **Google Colab**
   - **Why Use It:** Google Colab provides free access to GPUs, making it suitable for running machine learning models, especially for experimenting with the LSTM model.
   - **How to Use:**
     > You can run individual sections of the code to test models and preprocess data.
