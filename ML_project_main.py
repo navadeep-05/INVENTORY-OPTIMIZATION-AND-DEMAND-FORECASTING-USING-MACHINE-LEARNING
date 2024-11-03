@@ -485,7 +485,34 @@ def app():
                 for index, (name, dataset) in enumerate(datasets_list):
                     current_col = col1 if index == 0 else col2 if index == 1 else col3
                     with current_col:
-                        possible_sales_columns = ['Sales', 'sales', 'SalesQuantity', 'salesquantity', 'QuantitySold', 'quantitysold']
+                        possible_sales_columns = [
+                            # General Sales and Quantity Terms
+                            'Sales', 'sales', 'SalesQuantity', 'salesquantity', 'QuantitySold', 'quantitysold', 'ProjectedSales', 'projected_sales',
+                            'TotalSales', 'totalsales', 'TotalQuantity', 'totalquantity', 'Quantity', 'quantity', 'ExpectedSales', 'expected_sales', 'HistoricalSales', 'historical_sales',
+
+                            # Sales Revenue and Units Sold Terms
+                            'Revenue', 'revenue', 'SalesRevenue', 'salesrevenue', 'GrossSales', 'grosssales', 'NetSales', 'netsales',
+                            'UnitsSold', 'unitssold', 'ItemsSold', 'itemssold', 'VolumeSold', 'volumesold',
+                            
+                            # Demand Forecast Terms
+                            'DemandForecast', 'demandforecast', 'SalesForecast', 'salesforecast', 'ForecastQuantity', 'forecastquantity',
+                            'ForecastSales', 'forecastsales', 'PredictedSales', 'predictedsales', 'ProjectedDemand', 'projecteddemand',
+                            'ExpectedDemand', 'expecteddemand', 'FutureDemand', 'futuredemand', 'ForecastedDemand', 'forecasted_demand',
+
+                            # Supply Chain and Order Terms
+                            'OrderQuantity', 'orderquantity', 'ReorderQuantity', 'reorder_quantity', 'Backorder', 'backorder', 'OnOrder', 'onorder', 'PendingOrders', 'pendingorders',
+                            'ReplenishmentQuantity', 'replenishmentquantity', 'FulfilledOrders', 'fulfilledorders', 'ShippedQuantity', 'shippedquantity',
+                            'OrderFulfillment', 'orderfulfillment', 'StockQuantity', 'stockquantity', 'PurchaseQuantity', 'purchase_quantity',
+
+                            # Specific Business Terms
+                            'RetailSales', 'retailsales', 'WholesaleSales', 'wholesalesales', 'DistributorSales', 'distributorsales',
+                            'DealerSales', 'dealersales', 'ShopkeeperSales', 'shopkeepersales', 'ManufacturerSales', 'manufacturersales',
+    
+                            # Other Possible Terms Related to Inventory and Demand
+                            'Demand', 'demand', 'DemandQuantity', 'demandquantity', 'Supply', 'supply', 'SalesVolume', 'salesvolume', 'MarketDemand', 'marketdemand',
+                            'SeasonalDemand', 'seasonaldemand', 'CustomerOrders', 'customerorders', 'OrderVolume', 'ordervolume',
+                            'OrderDemand', 'orderdemand', 'SalesTarget', 'salestarget', 'SalesVolume', 'salesvolume', 'InventoryLevel', 'inventory_level', 'StockLevel', 'stock_level', 'Backlog', 'backlog',                 
+                        ]
 
                         sales_column = None
                         for col in possible_sales_columns:
