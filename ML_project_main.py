@@ -22,14 +22,12 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # This must be the first command in your app, and must be set only once
-st.set_page_config(page_title="ML Project 1", layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ML Project" , layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
 
-#Helper function to create a connection to SQLite
 def get_connection():
     conn = sqlite3.connect('users_data.db')   # This will create the database file
     return conn
 
-# Helper function to create a users table
 def create_users_table():
     conn = get_connection()
     conn.execute('''CREATE TABLE IF NOT EXISTS users (
@@ -40,7 +38,6 @@ def create_users_table():
     conn.commit()
     conn.close()
 
-# Helper function to hash passwords
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()   
 
@@ -49,13 +46,10 @@ def save_user_to_db(username, email, password):
     conn = get_connection()
     hashed_password = hash_password(password)
 
-    # Only insert username and email if provided
     if username:
-        conn.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-                     (username, email, hashed_password))
+        conn.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
     else:
-        conn.execute("INSERT INTO users (email, password) VALUES (?, ?)",
-                     (email, hashed_password))
+        conn.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (None, email, hashed_password))
 
     conn.commit()
     conn.close()
@@ -108,10 +102,13 @@ def migrate_users_table():
     conn.close()
 
 # Update the user's password in the database
-def update_user_password(username, new_password):
+def update_user_password(identifier, new_password, by_email=False):
     conn = get_connection()
     hashed_password = hash_password(new_password)
-    conn.execute("UPDATE users SET password = ? WHERE username = ?", (hashed_password, username))
+    if by_email:
+        conn.execute("UPDATE users SET password = ? WHERE email = ?", (hashed_password, identifier))
+    else:
+        conn.execute("UPDATE users SET password = ? WHERE username = ?", (hashed_password, identifier))
     conn.commit()
     conn.close()
 
@@ -129,7 +126,6 @@ if "show_data" not in st.session_state:
 if "reset_password" not in st.session_state:
     st.session_state.reset_password = False
 
-# Color schemes
 st.markdown("""
     <style>
         /* Light Mode */
@@ -161,14 +157,12 @@ st.markdown("""
 def signup_page():
     st.title("Sign Up")
 
-    # Dropdown selection for sign-up method
     signup_option = st.selectbox("Choose your sign-up method", ["Username and Password", "Email and Password"])
 
     with st.form(key='signup_form'):
         username = ""
         email = ""
 
-        # Display fields based on the selected sign-up method
         if signup_option == "Username and Password":
             username = st.text_input("Enter a username", "")
         elif signup_option == "Email and Password":
@@ -176,29 +170,28 @@ def signup_page():
 
         password = st.text_input("Enter a password", type='password')
         signup_button = st.form_submit_button("Sign Up")
-
-        # Sign-up logic based on chosen method
+        
         if signup_button:
             if signup_option == "Username and Password" and username and password:
                 if is_user_exists(username=username):
                     st.error("Username already exists. Please log in or choose a different username.")
                 else:
-                    save_user_to_db(username, None, password)  # Pass username and None for email
-                    st.session_state.signed_up = True
+                    save_user_to_db(username, None, password) 
+                    st.session_state.signed_up = False
+                    st.session_state.logged_in = False
                     st.success("Account created! Redirecting to login...")
                     time.sleep(1)
-                    st.session_state.logged_in = False
                     st.rerun()
 
             elif signup_option == "Email and Password" and email and password:
                 if is_user_exists(email=email):
                     st.error("Email already exists. Please log in or use a different email.")
                 else:
-                    save_user_to_db(None, email, password)  # Pass None for username and email
-                    st.session_state.signed_up = True
+                    save_user_to_db(None, email, password)  
+                    st.session_state.signed_up = False
+                    st.session_state.logged_in = False
                     st.success("Account created! Redirecting to login...")
                     time.sleep(1)
-                    st.session_state.logged_in = False
                     st.rerun()
             
             else:
@@ -207,7 +200,7 @@ def signup_page():
     st.markdown("<div style='text-align: center; margin-top: 20px;'>", unsafe_allow_html=True)
     st.write("Already have an account?")
     if st.button("Go to Login"):
-        st.session_state.signed_up = False  # Toggle the signup page state
+        st.session_state.signed_up = False 
         st.rerun()
 
 def reset_password_page():
@@ -222,12 +215,14 @@ def reset_password_page():
         reset_button = st.form_submit_button("Reset Password")
 
         if reset_button:
+            user_exists = is_user_exists(username, email)
             if not is_user_exists(username, email):
                 st.error("No account found with the provided username or email.")
             elif new_password != confirm_password:
                 st.error("Passwords do not match.")
             else:
-                update_user_password(username if username else is_user_exists[0], new_password)
+                identifier = username if username else email
+                update_user_password(identifier, new_password)
                 st.success("Password has been reset! Redirecting to login...")
                 time.sleep(1)
                 st.session_state.reset_password = False
@@ -241,7 +236,7 @@ def reset_password_page():
 
 def login_page():
     st.title("Login")
-    # Using form to help browsers detect login actions
+    
     with st.form(key='login_form'):
         username_or_email = st.text_input("Username or Email")
         password = st.text_input("Password", type='password')
@@ -253,7 +248,7 @@ def login_page():
                 st.session_state.logged_in = True
                 st.success("Login successful!")
                 time.sleep(1)
-                st.rerun()  # Force re-render to move to the main app
+                st.rerun()  
             else:
                 st.error("Incorrect username, email or password.")
 
@@ -262,7 +257,7 @@ def login_page():
         st.markdown("<div style='text-align: center; margin-top: 30px;'>", unsafe_allow_html=True)
         st.write("Don't have an account?")
         if st.button("Go to Sign Up"):
-            st.session_state.signed_up = True  # Toggle the signup page state
+            st.session_state.signed_up = True  
             st.rerun() 
 
     with col4:
@@ -271,8 +266,6 @@ def login_page():
         if st.button("Reset Password"):
             st.session_state.reset_password = True
             st.rerun()
-
-       
 
 def toggle_data_visibility():
     st.session_state.show_data = not st.session_state.show_data
@@ -485,7 +478,6 @@ def app():
                 # 4. Inventory Optimization
                 st.subheader("Inventory Optimization")
                 safety_stock_level = st.slider("Select Safety Stock Level", min_value=100, max_value=1000, value=300)
-                selected_model = st.selectbox("Select Model for Inventory Optimization", options=["Random Forest", "ARIMA"], index=0)
                 lead_time = 7
 
                 col1, col2, col3 = st.columns(3)
@@ -511,6 +503,8 @@ def app():
                             # Inventory Optimization Models (Before Date Processing)
                             st.write(f"Safety Stock Level selected: {safety_stock_level}")
 
+                            selectbox_key = f"selectbox_model_{name}"
+                            selected_model = st.selectbox("Select Model for Inventory Optimization", options=["Random Forest", "ARIMA"], index=0, key=selectbox_key)
                             if selected_model == "Random Forest":
                                 if 'Sales' in dataset.columns:
                                     X = dataset.index.to_frame(name='Day')  # Use index as feature for simple prediction
@@ -536,7 +530,6 @@ def app():
                                     arima_model = ARIMA(dataset['Sales'], order=(5, 1, 0))  # Adjust (p, d, q) as needed
                                     arima_results = arima_model.fit()
                     
-                                    # Calculate Safety Stock for lead time with ARIMA forecast variability
                                     forecast_arima = arima_results.forecast(steps=lead_time)
                                     avg_forecast = forecast_arima.mean()
                                     safety_stock_arima = 1.65 * (forecast_arima.std() * np.sqrt(lead_time))
@@ -551,9 +544,7 @@ def app():
         
                         else:
                             st.warning(f"Sales column not found in the dataset {name}. Please upload a dataset that contains sales column.")
-                            
-                            
-                        # Ensure dataset has been loaded
+                              
                         if len(datasets) > 0:
                             possible_date_columns = [
                             'date', 'datetime', 'timestamp', 'time', 
@@ -594,13 +585,13 @@ def app():
                             for col in dataset.columns:
                                 normalized_col = col.lower().replace(' ', '_')
                                 if normalized_col in normalized_possible_dates:
-                                    date_column = col  # Store the actual column name from the dataset
+                                    date_column = col  
                                     break 
                         
                             if date_column is None:
                                 st.error(f"No Date-related column found in the {name} dataset. Upload valid dataset.")
                                 continue
-                            else:                                # Convert the identified date column to datetime format with dayfirst=True
+                            else:                                
                                 dataset[date_column] = pd.to_datetime(dataset[date_column], dayfirst=True, errors='coerce')
                                 dataset['DayOfYear'] = dataset[date_column].dt.dayofyear
 
@@ -630,14 +621,12 @@ def app():
                                             y_pred_rescaled = None
                                             y_test_rescaled = y_test    
 
-                                            # Linear regression model
                                             if selected_model == "Linear Regression":
                                                 model = LinearRegression()
                                                 model.fit(X_train, y_train)
                                                 y_pred = model.predict(X_test)
                                                 y_pred_rescaled = y_pred  
-
-                                                # Linear Regression specific recommendation
+                                              
                                                 st.subheader("Sales Recommendations")
                                                 st.write(f"Model: {selected_model}")
                                                 st.write("""
@@ -682,7 +671,7 @@ def app():
                                                 scaler = MinMaxScaler(feature_range=(0, 1))
                                                 scaled_data = scaler.fit_transform(data[['Sales']])
 
-                                                time_steps = 10  # Adjust as needed
+                                                time_steps = 10 
                                                 X, y = [], []
 
                                                 for i in range(len(scaled_data) - time_steps):
@@ -778,7 +767,6 @@ def app():
                                                 st.write("Forecasted Sales for the next few days:")
                                                 st.write(forecast_df)
 
-                                            # Handle forecasting for Linear Regression, Random Forest, and ARIMA models
                                             elif selected_model in ["Linear Regression", "Random Forest", "ARIMA"]:
                                                 future_X = pd.DataFrame({
                                                     'DayOfYear': [(X['DayOfYear'].max() + i) % 365 for i in range(forecast_days)]
@@ -790,14 +778,12 @@ def app():
                                                 else:  # Linear Regression or Random Forest
                                                     future_pred = model.predict(future_X)
 
-                                                # Generate future dates
                                                 future_dates = pd.date_range(start=dataset[date_column].max(), periods=forecast_days + 1, freq='D')[1:]
 
                                                 date_column = col  
                                                 dataset[date_column] = pd.to_datetime(dataset[date_column])  # Ensure it's in datetime format
                                                 future_dates = pd.date_range(start=dataset[date_column].max(), periods=forecast_days + 1, freq='D')[1:]
 
-                                                # Create a DataFrame with the forecasted sales
                                                 forecast_df = pd.DataFrame({'Date': future_dates, 'Forecasted Sales': future_pred})
 
                                                 st.write("Forecasted Sales for the next few days:")
@@ -863,7 +849,7 @@ def show_about():
     - New models like **XGBoost** and **Prophet** are in development for more accurate predictions.
     """)
     st.write("")
-    st.image(r"future imp2.png", caption='Future Estimates', width=700, clamp=True, channels='RGB')
+    st.image(r"future imp2.png", caption='Empowering Growth Through Data-Driven Insights and Forecasting', width=700, clamp=True, channels='RGB')
 
 def show_ask_question():
     st.title("Ask a Question")
@@ -877,7 +863,6 @@ def show_ask_question():
     with col3:
         if st.button("Submit Question"):
             if question:
-                # Add logic to store the question in the database with category and optional contact info
                 conn = sqlite3.connect("user_data.db")
                 cursor = conn.cursor()
                 cursor.execute("CREATE TABLE IF NOT EXISTS questions (id INTEGER PRIMARY KEY, category TEXT, question TEXT, email TEXT)")
