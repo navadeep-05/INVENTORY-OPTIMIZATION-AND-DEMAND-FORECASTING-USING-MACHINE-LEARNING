@@ -485,7 +485,7 @@ def app():
                 for index, (name, dataset) in enumerate(datasets_list):
                     current_col = col1 if index == 0 else col2 if index == 1 else col3
                     with current_col:
-                        possible_sales_columns = [
+                       possible_sales_columns = [
                             # General Sales and Quantity Terms
                             'Sales', 'sales', 'SalesQuantity', 'salesquantity', 'QuantitySold', 'quantitysold', 'ProjectedSales', 'projected_sales',
                             'TotalSales', 'totalsales', 'TotalQuantity', 'totalquantity', 'Quantity', 'quantity', 'ExpectedSales', 'expected_sales', 'HistoricalSales', 'historical_sales',
@@ -509,7 +509,7 @@ def app():
                             'DealerSales', 'dealersales', 'ShopkeeperSales', 'shopkeepersales', 'ManufacturerSales', 'manufacturersales',
     
                             # Other Possible Terms Related to Inventory and Demand
-                            'Demand', 'demand', 'DemandQuantity', 'demandquantity', 'Supply', 'supply', 'SalesVolume', 'salesvolume', 'MarketDemand', 'marketdemand',
+                            'Dollars', 'dollars', 'Profit', 'profit', 'Rupees', 'rupees', 'Amount', 'amount', 'Demand', 'demand', 'DemandQuantity', 'demandquantity', 'Supply', 'supply', 'SalesVolume', 'salesvolume', 'MarketDemand', 'marketdemand',
                             'SeasonalDemand', 'seasonaldemand', 'CustomerOrders', 'customerorders', 'OrderVolume', 'ordervolume',
                             'OrderDemand', 'orderdemand', 'SalesTarget', 'salestarget', 'SalesVolume', 'salesvolume', 'InventoryLevel', 'inventory_level', 'StockLevel', 'stock_level', 'Backlog', 'backlog',                 
                         ]
