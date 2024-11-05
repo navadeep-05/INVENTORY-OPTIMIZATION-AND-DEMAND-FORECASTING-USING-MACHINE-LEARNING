@@ -514,7 +514,7 @@ def app():
                             'OrderDemand', 'orderdemand', 'SalesTarget', 'salestarget', 'SalesVolume', 'salesvolume', 'InventoryLevel', 'inventory_level', 'StockLevel', 'stock_level', 'Backlog', 'backlog',                 
                         ]
 
-                        sales_column = None
+                        
                         for col in possible_sales_columns:
                             if col in dataset.columns:
                                 sales_column = col
