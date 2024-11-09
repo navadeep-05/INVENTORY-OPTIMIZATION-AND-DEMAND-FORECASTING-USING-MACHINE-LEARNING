@@ -149,6 +149,34 @@ st.markdown("""
                 --button-color: #FF3E3E;
             }
         }
+        /* Style for the tabs */
+        div[role="tab"] {
+            font-weight: bold;
+        }
+        div[data-baseweb="tab"] {
+            font-size: 1.2em; /* Adjust the font size */
+            width: 20%; /* To adjust the width, 20percent for five evenly spaced tabs */
+            font-weight: bold;
+        }
+        div[data-baseweb="tab-list"] {
+            display: flex;
+            justify-content: space-around; /* Evenly distribute tabs */
+        }
+        div[data-baseweb="tab"] > button {
+            font-weight: bold; /* Make text bold */
+            color: #1E90FF; /* Change tab text color if desired */
+        }
+        div[role="tab"][aria-selected="true"] {
+            color: #1E90FF;
+            border-bottom: 2px solid #ff4b4b;
+        }
+        div[role="tab"][aria-selected="false"] {
+            color: #808080;
+        }
+        .streamlit-expanderHeader {
+            background-color: #1E90FF;  /* Bright Blue */
+            color: white;
+        }
 
         /* Apply styles */
         .main { background-color: var(--background-color) !important; }
@@ -430,7 +458,7 @@ def app():
         st.markdown("<br>" * 2, unsafe_allow_html=True)
     
     # User-side data upload (shopkeepers, retailers, etc.)
-    st.subheader("Upload Sales Data (Max 3 CSV/XLSX files)")
+    st.subheader("Upload Sales Data (Max 5 CSV/XLSX files)")
     uploaded_files = st.file_uploader("Upload datasets (CSV/XLSX)", type=["csv", "xlsx"], accept_multiple_files=True)
     st.markdown("<p style='font-family: Arial; font-size: 18px; color: tomato; text-align: center'>[NOTE]: The  uploaded  dataset/s  must  contain  'Sales  related column'  and  'Date  related  column'</p>", unsafe_allow_html=True)
     
@@ -481,17 +509,19 @@ def app():
 
             if evaluate_button or st.session_state.evaluated:
                 st.session_state.evaluated = True
-                st.write("Performing Inventory Optimization and Sales Prediction...")                        
-                # 4. Inventory Optimization
-                st.subheader("Inventory Optimization")
-                safety_stock_level = st.slider("Select Safety Stock Level", min_value=100, max_value=1000, value=300)
-                lead_time = 7
+                st.write("Performing Inventory Optimization and Sales Prediction...")  
 
-                col1, col2, col3 = st.columns(3)
+                 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5"])
                 datasets_list = list(datasets.items())
                 for index, (name, dataset) in enumerate(datasets_list):
-                    current_col = col1 if index == 0 else col2 if index == 1 else col3
-                    with current_col:
+                    
+                    with current_tab:
+                        current_tab = tab1 if index == 0 else tab2 if index == 1 else tab3 if index == 2 else tab4 if index == 3 else tab5
+                        st.markdown("<br>" * 1, unsafe_allow_html=True)
+                        # Inventory Optimization
+                        st.subheader("Inventory Optimization")
+                        safety_stock_level = st.slider("Select Safety Stock Level", min_value=100, max_value=1000, value=300)
+                        lead_time = 7
                         possible_sales_columns = [
                             # General Sales and Quantity Terms
                             'Sales', 'sales', 'SalesQuantity', 'salesquantity', 'QuantitySold', 'quantitysold', 'ProjectedSales', 'projected_sales',
@@ -629,7 +659,7 @@ def app():
                                 dataset[date_column] = pd.to_datetime(dataset[date_column], dayfirst=True, errors='coerce')
                                 dataset['DayOfYear'] = dataset[date_column].dt.dayofyear
 
-                                with current_col:
+                                with current_tab:
                                     st.subheader(f"Date Processing for {name}")
                                     st.success(f"Successfully processed the dataset with {date_column} as the date-related column.")
                                     st.write(dataset[['DayOfYear', date_column]].head())
@@ -640,7 +670,7 @@ def app():
                                     y = dataset['Sales']
                                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # Optional: Debugging check
 
-                                    with current_col:
+                                    with current_tab:
                                         name = f"Dataset {index + 1}"
                                         st.subheader(f"Sales prediction for {name}")
                                         
