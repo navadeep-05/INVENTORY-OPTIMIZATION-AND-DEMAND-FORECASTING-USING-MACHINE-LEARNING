@@ -511,7 +511,7 @@ def app():
                 st.session_state.evaluated = True
                 st.write("Performing Inventory Optimization and Sales Prediction...")  
 
-                 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5"])
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5"])
                 datasets_list = list(datasets.items())
                 for index, (name, dataset) in enumerate(datasets_list):
                     
