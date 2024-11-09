@@ -520,7 +520,7 @@ def app():
                         st.markdown("<br>" * 1, unsafe_allow_html=True)
                         # Inventory Optimization
                         st.subheader("Inventory Optimization")
-                        safety_stock_level = st.slider("Select Safety Stock Level", min_value=100, max_value=1000, value=300)
+                        safety_stock_level = st.slider("Select Safety Stock Level", min_value=100, max_value=1000, value=300, key=f"safety_stock_{name}")
                         lead_time = 7
                         possible_sales_columns = [
                             # General Sales and Quantity Terms
