@@ -514,9 +514,9 @@ def app():
                 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dataset 1", "Dataset 2", "Dataset 3", "Dataset 4", "Dataset 5"])
                 datasets_list = list(datasets.items())
                 for index, (name, dataset) in enumerate(datasets_list):
+                    current_tab = tab1 if index == 0 else tab2 if index == 1 else tab3 if index == 2 else tab4 if index == 3 else tab5
                     
                     with current_tab:
-                        current_tab = tab1 if index == 0 else tab2 if index == 1 else tab3 if index == 2 else tab4 if index == 3 else tab5
                         st.markdown("<br>" * 1, unsafe_allow_html=True)
                         # Inventory Optimization
                         st.subheader("Inventory Optimization")
