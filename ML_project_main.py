@@ -25,110 +25,85 @@ warnings.filterwarnings("ignore")
 st.set_page_config(page_title="ML Project" , layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
 
 #Helper function to create a connection to SQLite
+DB_FILE = "users_data.db"
 def get_connection():
-    conn = sqlite3.connect('users_data.db')   # This will create the database file
-    return conn
+    return sqlite3.connect(DB_FILE)
 
-# Helper function to create a users table
-def create_users_table():
+
+def init_db():
     conn = get_connection()
-    conn.execute('''CREATE TABLE IF NOT EXISTS users (
-                        username TEXT PRIMARY KEY,
-                        email TEXT UNIQUE,
-                        password TEXT
-                    );''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
     conn.commit()
     conn.close()
 
 # Helper function to hash passwords
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()   
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()  
 
 # Save a new user's details into the database
-def save_user_to_db(username, email, password):
+def user_exists(email=None, username=None):
     conn = get_connection()
-    hashed_password = hash_password(password)
-
-    # Only insert username and email if provided
-    if username:
-        conn.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
-    else:
-        conn.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (None, email, hashed_password))
-
-    conn.commit()
+    cur = conn.cursor()
+    if email:
+        cur.execute("SELECT 1 FROM users WHERE email = ?", (email,))
+    elif username:
+        cur.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+    exists = cur.fetchone() is not None
     conn.close()
+    return exists
 
-# Check if a user exists in the database
-def is_user_exists(username=None, email=None):
+def register_user(username, email, password):
+    if not email or not password:
+        return False, "Email and password required"
+    if user_exists(email=email):
+        return False, "Email already registered"
+    if username and user_exists(username=username):
+        return False, "Username taken"
+    
+    try:
+        conn = get_connection()
+        conn.execute(
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            (username or None, email, hash_password(password))
+        )
+        conn.commit()
+        conn.close()
+        return True, "Success"
+    except Exception as e:
+        return False, f"Error: {e}"
+    
+def validate_login(identifier, password):
     conn = get_connection()
-    cursor = conn.execute("SELECT * FROM users WHERE username = ? OR email = ?", (username, email))
-    user = cursor.fetchone()
-    conn.close()
-    return user is not None
-
-# Validate login credentials
-def validate_login(username_or_email, password):
-    conn = get_connection()
-    hashed_password = hash_password(password)
-    cursor = conn.execute(
-        "SELECT * FROM users WHERE (username = ? OR email = ?) AND password = ?",
-        (username_or_email, username_or_email, hashed_password)
+    cur = conn.cursor()
+    hashed = hash_password(password)
+    cur.execute(
+        "SELECT username, email FROM users WHERE (username = ? OR email = ?) AND password = ?",
+        (identifier, identifier, hashed)
     )
-    user = cursor.fetchone()
+    user = cur.fetchone()
     conn.close()
     return user
 
-def migrate_users_table():
-    conn = get_connection()
-    
-    # Step 1: Create a new temporary table with the desired schema
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS users_temp (
-            username TEXT PRIMARY KEY,
-            email TEXT UNIQUE,
-            password TEXT
-        );
-    ''')
-    
-    # Step 2: Copy data from the old table to the new table, leaving email as NULL for old entries
-    conn.execute('''
-        INSERT INTO users_temp (username, password)
-        SELECT username, password FROM users;
-    ''')
-    
-    conn.commit()
-    
-    # Step 3: Drop the old table and rename the new table
-    conn.execute("DROP TABLE users;")
-    conn.execute("ALTER TABLE users_temp RENAME TO users;")
-    
-    conn.commit()
-    conn.close()
+# Initialize DB once
+init_db()
 
-# Update the user's password in the database
-def update_user_password(identifier, new_password, by_email=False):
-    conn = get_connection()
-    hashed_password = hash_password(new_password)
-    if by_email:
-        conn.execute("UPDATE users SET password = ? WHERE email = ?", (hashed_password, identifier))
-    else:
-        conn.execute("UPDATE users SET password = ? WHERE username = ?", (hashed_password, identifier))
-    conn.commit()
-    conn.close()
-
-# Call the function to ensure the users table is created before any operations
-migrate_users_table()
-create_users_table()
-
-# Session state for login management
+# Session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-if "signed_up" not in st.session_state:
-    st.session_state.signed_up = False
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "login"
 if "show_data" not in st.session_state:
-    st.session_state.show_data = False
-if "reset_password" not in st.session_state:
-    st.session_state.reset_password = False
+    st.session_state.show_data = False   
+if "username" not in st.session_state:
+    st.session_state.username = None
+
 
 st.markdown("""
     <style>
@@ -188,85 +163,39 @@ st.markdown("""
 
 def signup_page():
     st.title("Sign Up")
-
-    # Dropdown selection for sign-up method
-    signup_option = st.selectbox("Choose your sign-up method", ["Username and Password", "Email and Password"])
-
-    with st.form(key='signup_form'):
-        username = ""
-        email = ""
-
-        # Display fields based on the selected sign-up method
-        if signup_option == "Username and Password":
-            username = st.text_input("Enter a username", "")
-        elif signup_option == "Email and Password":
-            email = st.text_input("Enter your email address", "")
-
-        password = st.text_input("Enter a password", type='password')
-        signup_button = st.form_submit_button("Sign Up")
-
-        # Sign-up logic based on chosen method
-        if signup_button:
-            if signup_option == "Username and Password" and username and password:
-                if is_user_exists(username=username):
-                    st.error("Username already exists. Please log in or choose a different username.")
-                else:
-                    save_user_to_db(username, None, password)  # Pass username and None for email
-                    st.session_state.signed_up = False
-                    st.session_state.logged_in = False
-                    st.success("Account created! Redirecting to login...")
-                    time.sleep(1)
-                    st.rerun()
-
-            elif signup_option == "Email and Password" and email and password:
-                if is_user_exists(email=email):
-                    st.error("Email already exists. Please log in or use a different email.")
-                else:
-                    save_user_to_db(None, email, password)  # Pass None for username and email
-                    st.session_state.signed_up = False
-                    st.session_state.logged_in = False
-                    st.success("Account created! Redirecting to login...")
-                    time.sleep(1)
-                    st.rerun()
-            
+    with st.form("signup_form"):
+        email = st.text_input("Email *", placeholder="you@example.com")
+        username = st.text_input("Username (optional)")
+        password = st.text_input("Password *", type="password")
+        confirm = st.text_input("Confirm Password *", type="password")
+        submitted = st.form_submit_button("Create Account")
+        
+        if submitted:
+            if password != confirm:
+                st.error("Passwords don't match")
+            elif len(password) < 6:
+                st.error("Password too short")
+            elif not email:
+                st.error("Email required")
             else:
-                st.error("Please fill in the required fields and select one sign-up option.")
+                success, msg = register_user(username or None, email, password)
+                if success:
+                    st.success("Account created! Taking you to login...")
+                    time.sleep(1.5)
+                    st.session_state.current_page = "login"
+                    st.rerun()
+                else:
+                    st.error(msg)
 
-    st.markdown("<div style='text-align: center; margin-top: 20px;'>", unsafe_allow_html=True)
-    st.write("Already have an account?")
-    if st.button("Go to Login"):
-        st.session_state.signed_up = False  # Toggle the signup page state
+    if st.button("Already have an account? → Login"):
+        st.session_state.current_page = "login"
         st.rerun()
 
 def reset_password_page():
-    st.title("Reset Password")
-    st.write("Reset your password using either your Username or Email.")
-
-    with st.form(key='reset_form'):
-        username = st.text_input("Enter your username (optional)")
-        email = st.text_input("Enter your email address (optional)")
-        new_password = st.text_input("Enter a new password", type='password')
-        confirm_password = st.text_input("Confirm new password", type='password')
-        reset_button = st.form_submit_button("Reset Password")
-
-        if reset_button:
-            user_exists = is_user_exists(username, email)
-            if not is_user_exists(username, email):
-                st.error("No account found with the provided username or email.")
-            elif new_password != confirm_password:
-                st.error("Passwords do not match.")
-            else:
-                identifier = username if username else email
-                update_user_password(identifier, new_password)
-                st.success("Password has been reset! Redirecting to login...")
-                time.sleep(1)
-                st.session_state.reset_password = False
-                st.rerun()
-
-    st.markdown("<div style='text-align: center; margin-top: 20px;'>", unsafe_allow_html=True)
-    st.write("Remembered your password?")
-    if st.button("Go to Login"):
-        st.session_state.reset_password = False
+    st.title("Reset Password (Coming Soon)")
+    st.info("Password reset feature is under development. For now, re-register with another fresh credentials.")
+    if st.button("Back to Login"):
+        st.session_state.current_page = "login"
         st.rerun()
 
 def login_page():
@@ -281,9 +210,10 @@ def login_page():
             user = validate_login(username_or_email, password)
             if user:
                 st.session_state.logged_in = True
-                st.success("Login successful!")
+                st.session_state.username = user[0] or user[1].split("@")[0]
+                st.success(f"Welcome back, {st.session_state.username}!")
                 time.sleep(1)
-                st.rerun()  # Force re-render to move to the main app
+                st.rerun()
             else:
                 st.error("Incorrect username, email or password.")
 
@@ -292,31 +222,23 @@ def login_page():
         st.markdown("<div style='text-align: center; margin-top: 30px;'>", unsafe_allow_html=True)
         st.write("Don't have an account?")
         if st.button("Go to Sign Up"):
-            st.session_state.signed_up = True  # Toggle the signup page state
+            st.session_state.current_page = "signup"   
             st.rerun() 
 
     with col4:
         st.markdown("<div style='text-align: center; margin-top: 30px;'>", unsafe_allow_html=True)
         st.write("Forgot your password?")
         if st.button("Reset Password"):
-            st.session_state.reset_password = True
+            st.session_state.current_page = "reset"
             st.rerun()
        
 
 def toggle_data_visibility():
     st.session_state.show_data = not st.session_state.show_data
 
-def is_date_column(column):
-    try:
-        pd.to_datetime(column)
-        return True
-    except (ValueError, TypeError):
-        return False
 
 # Main app function
-def app():
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = True 
+def app(): 
 
     st.image(r"logo2.png", width=100)
     st.header("Welcome to the Web Application")
@@ -1079,40 +1001,34 @@ def show_feedback():
 
 def logout():
     st.title("Logout")
-    st.write("Thank you for visiting our Sales Prediction Platform. We hope you found the insights and recommendations helpful! 😀")
-    st.markdown("<br>" * 1, unsafe_allow_html=True)
-    if st.session_state.get('logged_in', False):
-        st.subheader("Ready to Log Out?")
-        st.write("""
-            If you have completed your tasks and would like to log out, click the button below. 
-            We appreciate your time and look forward to seeing you again soon!✨
-        """)
-
-        if st.button("Confirm Logout", key="logout"):
-            st.session_state.logged_in = False  
-            st.success("You have been logged out successfully.")
-            st.balloons()  # Celebrate their visit with balloons!
-            st.write("Redirecting you back to the login page...")
-            time.sleep(1)
-            st.rerun()
+    st.write("Thank you for using the platform! See you soon!")
+    if st.button("Confirm Logout", type="primary"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.success("Logged out successfully!")
+        st.balloons()
+        time.sleep(2)
+        st.rerun()
     else:
         st.info("You are already logged out.")
+
     st.write("")
     st.video(r"an animation of a hand drawn business strategy with chart_preview.mp4")
+
 
 # Main routing logic based on session state
 def main():
     if not st.session_state.logged_in:
-        if st.session_state.signed_up:
-            signup_page()  # Show the signup page
-        elif st.session_state.reset_password:
-            reset_password_page()
+        if st.session_state.current_page == "signup":
+            signup_page()
+        elif st.session_state.current_page == "reset":
+            reset_password_page()  
         else:
-            login_page()  # Show the login page
+            login_page()
     else:
-        st.sidebar.title("Dashboard")
+        st.sidebar.success(f"Welcome, {st.session_state.username}!")
         st.sidebar.markdown("---")
-        page = st.sidebar.selectbox("Choose a section", ["App", "About", "Ask a Question", "Feedback", "Logout"])
+        page = st.sidebar.selectbox("Navigate", ["App", "About", "Ask a Question", "Feedback", "Logout"])
 
         if page == "App":
             app()
