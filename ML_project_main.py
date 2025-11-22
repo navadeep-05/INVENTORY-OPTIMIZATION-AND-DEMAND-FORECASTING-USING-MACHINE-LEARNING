@@ -524,7 +524,7 @@ def app():
                         lead_time = 7
                         possible_sales_columns = [
                             # General Sales and Quantity Terms
-                            'Sales', 'sales', 'SalesQuantity', 'salesquantity', 'QuantitySold', 'quantitysold', 'ProjectedSales', 'projected_sales',
+                            'Sales', 'sales', 'SalesQuantity', 'salesquantity', 'quantity_sold', 'QuantitySold', 'quantitysold', 'ProjectedSales', 'projected_sales',
                             'TotalSales', 'totalsales', 'TotalQuantity', 'totalquantity', 'Quantity', 'quantity', 'ExpectedSales', 'expected_sales', 'HistoricalSales', 'historical_sales',
 
                             # Sales Revenue and Units Sold Terms
@@ -735,7 +735,7 @@ def app():
                                             elif selected_model == "LSTM (Long-Short-Term-Memory)":
                                                 # LSTM model for time series forecasting
                                                 scaler = MinMaxScaler(feature_range=(0, 1))
-                                                scaled_data = scaler.fit_transform(data[['Sales']])
+                                                scaled_data = scaler.fit_transform(dataset[['Sales']].values)
 
                                                 time_steps = 10  # Adjust as needed
                                                 X, y = [], []
