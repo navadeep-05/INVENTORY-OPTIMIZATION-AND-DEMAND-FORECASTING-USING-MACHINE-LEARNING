@@ -1001,19 +1001,32 @@ def show_feedback():
 
 def logout():
     st.title("Logout")
-    st.write("Thank you for using the platform! See you soon!")
-    if st.button("Confirm Logout", type="primary"):
+    st.write("Thank you for using Demand Forecasting & Inventory Optimization Platform ☺️")
+
+    if st.button("Confirm Logout", type="primary", use_container_width=True):
+        # Clear ALL session state
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.success("Logged out successfully!")
+            
+        st.success("You have been logged out successfully!")
         st.balloons()
         time.sleep(2)
         st.rerun()
-    else:
-        st.info("You are already logged out.")
 
-    st.write("")
-    st.video(r"an animation of a hand drawn business strategy with chart_preview.mp4")
+    st.markdown("<br><br>", unsafe_allow_html=True)
+        
+
+    video_file = open("an animation of a hand drawn business strategy with chart_preview.mp4", "rb")
+    video_bytes = video_file.read()
+
+    st.video(
+        video_bytes,
+        format="video/mp4",
+        start_time=0,
+        autoplay=True,     # This works!
+        loop=True,         # Loops forever
+        muted=True         # Required for autoplay
+    )
 
 
 # Main routing logic based on session state
