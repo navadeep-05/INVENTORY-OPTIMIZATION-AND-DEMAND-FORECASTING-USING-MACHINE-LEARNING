@@ -8,3 +8,5 @@ numpy>=2.0.0
 chardet>=5.1.0
 streamlit==1.39.0
 openpyxl
+sqlalchemy
+psycopg2-binary
