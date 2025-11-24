@@ -840,7 +840,11 @@ def show_about():
     - New models like **XGBoost** and **Prophet** are in development for more accurate predictions.
     """)
     st.write("")
-    st.video("animation-of-brainstorming-idea-business.mp4", caption='Empowering Growth Through Data-Driven Insights and Forecasting')
+    st.video("animation-of-brainstorming-idea-business.mp4", start_time=0,
+        autoplay=True,     
+        loop=True,         
+        muted=True
+    )
 
 def show_ask_question():
     st.title("Ask a Question")
@@ -1057,10 +1061,3 @@ def main():
 # Call the main function to route the app
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
