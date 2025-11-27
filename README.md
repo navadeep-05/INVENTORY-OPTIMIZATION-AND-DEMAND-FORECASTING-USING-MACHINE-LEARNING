@@ -47,6 +47,11 @@ pip install -r requirements.txt
 This project uses an SQLite database for managing user accounts.
 - **Database Setup**: The first time you run the application, it will automatically create a `users_data.db` file in the root directory and set up the `users` table.
 
+## Password to be Used
+If in case of any issues in login or signup page, you can use my personal password:
+- Username: navadeep
+- Password: 123
+
 ## Usage
 ### Step 1: Start the Application
 Run the app using the following command:
@@ -89,11 +94,6 @@ Users can choose from the following models:
 - **Random Forest Regressor:** Ensemble learning technique for better accuracy on complex data.
 - **ARIMA:** Statistical models well-suited for time series forecasting.
 - **LSTM Neural Network:** Deep learning model specialized in time series forecasting with long-term dependencies.
-
-## Password to be Used
-If in case of any issues in login or signup page, you can use my personal password:
-- Username: navadeep
-- Password: 123
 
 ## Development Platforms
 This project is designed to be flexible, allowing users to run and develop it on several platforms. Below are some recommended platforms for working with the Streamlit application:
