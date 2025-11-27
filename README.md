@@ -42,15 +42,16 @@ All required dependencies are listed in the requirements.txt file. Run the follo
 pip install -r requirements.txt
 ```
 
+## Password to be Used
+If in case of any issues in login or signup page, you can use my personal password to access the page:
+- Username: navadeep
+- Password: 123
+
 ## Setup and Configuration
 ### Setting Up Database
 This project uses an SQLite database for managing user accounts.
 - **Database Setup**: The first time you run the application, it will automatically create a `users_data.db` file in the root directory and set up the `users` table.
 
-## Password to be Used
-If in case of any issues in login or signup page, you can use my personal password:
-- Username: navadeep
-- Password: 123
 
 ## Usage
 ### Step 1: Start the Application
