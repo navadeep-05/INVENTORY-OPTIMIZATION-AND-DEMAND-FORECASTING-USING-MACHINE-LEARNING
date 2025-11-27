@@ -90,6 +90,11 @@ Users can choose from the following models:
 - **ARIMA:** Statistical models well-suited for time series forecasting.
 - **LSTM Neural Network:** Deep learning model specialized in time series forecasting with long-term dependencies.
 
+## Password to be Used
+If in case of any issues in login or signup page, you can use my personal password:
+- Username: navadeep
+- Password: 123
+
 ## Development Platforms
 This project is designed to be flexible, allowing users to run and develop it on several platforms. Below are some recommended platforms for working with the Streamlit application:
 1. **Visual Studio Code (VS Code)**
