@@ -1,8 +1,7 @@
+# Use Python 3.11 or 3.12 for TensorFlow compatibility
 scikit-learn
 statsmodels
-tensorflow
 plotly
-keras
 pandas>=2.0.0
 numpy>=2.0.0
 chardet>=5.1.0
@@ -10,3 +9,5 @@ streamlit==1.39.0
 openpyxl
 sqlalchemy
 psycopg2-binary
+tensorflow-cpu==2.15.1
+keras==2.15.1

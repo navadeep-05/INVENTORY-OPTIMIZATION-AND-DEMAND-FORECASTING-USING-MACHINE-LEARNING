@@ -1,3 +1,4 @@
+import sys
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -22,7 +23,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # This must be the first command in your app, and must be set only once
-st.set_page_config(page_title="ML Project" , layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
+st.set_page_config(page_title="BITS Pilani M.Tech. (WILP) Project" , layout="wide", page_icon = "icon2.png", initial_sidebar_state="expanded")
 
 #Helper function to create a connection to SQLite
 DB_FILE = "users_data.db"
@@ -245,7 +246,14 @@ def app():
     st.image(r"banner3.jpeg", use_column_width=True)
     st.title("Demand Forecasting & Inventory Optimization📈")
 
-    
+    if not HAS_TF_KERAS:
+        st.warning(
+            "LSTM forecasting is currently disabled because TensorFlow/Keras is not installed or not compatible with this Python version. "
+            "Use Python 3.11/3.12 and install `tensorflow-cpu==2.15.1` and `keras==2.15.1` to enable LSTM."
+        )
+        if st.checkbox("Show TensorFlow import error details"):
+            st.code(TF_IMPORT_ERROR or "No additional error information available.")
+
     # 2. Provide a default dataset (Holidays)
     st.subheader("Default Datasets (provided by developer)")
     data = {
@@ -549,7 +557,7 @@ def app():
                             'start date', 'Start Date', 
                             'end date', 'End Date', 
                             'close date', 'Close Date',
-                            'salesdate', 'SalesDate' 
+                            'salesdate', 'SalesDate',
                             'registration date', 'Registration Date', 
                             'signup date', 'Signup Date', 
                             'login date', 'Login Date', 
@@ -596,8 +604,14 @@ def app():
                                         name = f"Dataset {index + 1}"
                                         st.subheader(f"Sales prediction for {name}")
                                         
+                                        model_options = ["None", "Linear Regression", "Random Forest", "ARIMA"]
+                                        if HAS_TF_KERAS:
+                                            model_options.append("LSTM (Long-Short-Term-Memory)")
+                                        else:
+                                            st.info("LSTM is disabled because TensorFlow/Keras is not installed. Install a supported Python version and tensorflow to enable it.")
+
                                         selected_model = st.selectbox(
-                                            f"Choose a forecasting model for {name}:", ["None", "Linear Regression", "Random Forest", "ARIMA", "LSTM (Long-Short-Term-Memory)"],
+                                            f"Choose a forecasting model for {name}:", model_options,
                                             key = f"model_{index}"
                                         )
 
